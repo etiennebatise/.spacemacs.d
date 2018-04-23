@@ -8,6 +8,9 @@
    dotspacemacs-configuration-layers '(purescript
                                        idris
                                        octave
+                                       csv
+                                       octave
+                                       ruby
                                        python
                                        docker
                                        haskell
@@ -176,10 +179,6 @@
   (load-file "~/.spacemacs.d/magit-gerrit.el"))
 
 (defun user-config/layout ()
-  (set-face-background 'mode-line "slate blue")
-  (set-face-foreground 'mode-line "yellow")
-  (set-face-background 'mode-line-inactive "black")
-  (set-face-foreground 'mode-line-inactive "white")
   (setq evil-insert-state-cursor '((bar . 4) "white")
         evil-normal-state-cursor '(box "white")
         evil-replace-state-cursor '(hollow "white")
