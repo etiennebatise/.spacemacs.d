@@ -46,13 +46,13 @@
                                                         auto-completion-complete-with-key-sequence nil
                                                         auto-completion-complete-with-key-sequence-delay 0.1
                                                         auto-completion-private-snippets-directory nil)
-                                       (erc :variables
-                                            erc-nick "huxx"
-                                            erc-prompt-for-password nil
-                                            erc-prompt-for-nickserv-password nil
-                                            erc-highlight-notice '("JOIN" "QUIT")
-                                            erc-hide-list '("PART" "QUIT")
-                                            erc-autojoin-channels-alist '(("freenode.net" "#haskell" "#nixos")))
+                                       ;; (erc :variables
+                                       ;;      erc-nick "huxx"
+                                       ;;      erc-prompt-for-password nil
+                                       ;;      erc-prompt-for-nickserv-password nil
+                                       ;;      erc-highlight-notice '("JOIN" "QUIT")
+                                       ;;      erc-hide-list '("PART" "QUIT")
+                                       ;;      erc-autojoin-channels-alist '(("freenode.net" "#haskell" "#nixos")))
                                        (shell :variables
                                               shell-default-shell 'eshell
                                               shell-default-position 'bottom
@@ -63,7 +63,8 @@
                                       pretty-mode
                                       groovy-mode
                                       legalese
-                                      processing-mode)
+                                      processing-mode
+                                      evil-mc)
    dotspacemacs-frozen-packages '()
    dotspacemacs-excluded-packages '(vi-tilde-fringe
                                     spaceline)
@@ -85,11 +86,9 @@
 
 (defun dotspacemacs/user-config ()
   "Custom user configuration, doing all the displaying stuff after package are loaded."
-  (user-config/email)
   (user-config/pretty)
   (user-config/icons)
   (user-config/editing)
-  (user-config/legalese)
   (user-config/csharp)
   (user-config/java)
   (user-config/layout)
@@ -110,8 +109,8 @@
    dotspacemacs-startup-buffer-responsive t
    dotspacemacs-scratch-mode 'text-mode
    dotspacemacs-colorize-cursor-according-to-state nil
-   dotspacemacs-default-font '("DejaVue Sans Mono"
-                               :size 15)
+   dotspacemacs-default-font '("Fira Code"
+                               :size 28)
    dotspacemacs-leader-key "SPC"
    dotspacemacs-emacs-command-key "SPC"
    dotspacemacs-ex-command-key ":"
@@ -144,7 +143,7 @@
    dotspacemacs-inactive-transparency 90
    dotspacemacs-show-transient-state-title t
    dotspacemacs-show-transient-state-color-guide t
-   dotspacemacs-mode-line-unicode-symbols nil
+   dotspacemacs-mode-line-unicode-symbols t
    dotspacemacs-mode-line-theme 'vanilla
    dotspacemacs-smooth-scrolling nil
    dotspacemacs-line-numbers nil
@@ -186,28 +185,6 @@
         evil-iedit-state-cursor '(box "gold")
         evil-lisp-state-cursor '(box "deep pink")))
 
-(defun user-config/email ()
-  (add-hook 'gnus-message-setup-hook 'mml-secure-message-sign-pgpmime)
-  (setq gnus-message-replysign t
-        message-signature t
-        mm-text-html-renderer 'shr
-        mm-verify-option 'always
-        gnus-always-read-dribble-file t
-        epa-file-cache-passphrase-for-symmetric-encryption t
-        shr-color-visible-luminance-min 80
-        user-full-name "Hussein Ait-Lahcen"
-        user-mail-address "hussein.aitlahcen@gmail.com"
-        gnus-secondary-select-methods '((nnimap "gmail"
-                                                (nnimap-address "imap.gmail.com")
-                                                (nnimap-server-port 993)
-                                                (nnimap-stream ssl)))
-        message-send-mail-function 'smtpmail-send-it
-        smtpmail-stream-type 'ssl
-        smtpmail-smtp-server "smtp.gmail.com"
-        smtpmail-smtp-service 465
-        nnml-directory "~/gmail"
-        message-directory "~/gmail"))
-
 (defun user-config/editing ()
   ;; Pandoc mode for markdown
   (add-hook 'markdown-mode-hook 'pandoc-mode)
@@ -237,7 +214,7 @@
   (when (not (version< emacs-version "26"))
     (setq display-line-numbers-type 'absolute)
     (custom-set-faces '(line-number ((t (:foreground "dim gray")))))
-    (custom-set-faces '(line-number-current-line ((t (:background "gray12" :foreground "white")))))
+    (custom-set-faces '(line-number-current-line ((t (:background "dim gray" :foreground "white")))))
     (add-hook 'prog-mode-hook 'display-line-numbers-mode)
     (add-hook 'org-mode-hook 'display-line-numbers-mode)
     (add-hook 'yaml-mode-hook 'display-line-numbers-mode))
@@ -249,10 +226,6 @@
   ;; Cursor
   (global-evil-mc-mode t)
   (blink-cursor-mode t)
-
-  ;; Org-mode
-  (setq org-agenda-files (mapcar (lambda (d) (concat org-directory d)) '("/general.org" "/work.org" "/personnal.org" "/school.org"))
-        org-default-notes-file (concat org-directory "/general.org"))
 
   ;; Bindings
   (setq evil-escape-key-sequence "dk")
@@ -272,6 +245,3 @@
   (pretty-fonts-set-kwds
    '((pretty-fonts-fira-font prog-mode-hook org-mode-hook))))
 
-(defun user-config/legalese ()
-  (setq legalese-default-copyright "Hussein Ait-Lahcen"
-        legalese-default-author "Hussein Ait-Lahcen <hussein.aitlahcen@gmail.com>"))
