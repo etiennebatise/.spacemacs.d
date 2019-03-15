@@ -205,6 +205,7 @@
   (evil-leader/set-key-for-mode 'purescript-mode
     "a" 'psc-ide-show-type)
 
+  (add-hook 'haskell-mode-hook 'abbrev-mode)
   (add-hook 'dante-mode-hook 'flycheck-mode)
   (add-hook 'dante-mode-hook '(lambda() (flycheck-add-next-checker
                                          'haskell-dante
