@@ -5,37 +5,30 @@
    dotspacemacs-enable-lazy-installation 'unused
    dotspacemacs-ask-for-lazy-installation nil
    dotspacemacs-configuration-layer-path '()
-   dotspacemacs-configuration-layers '(purescript
-                                       idris
-                                       octave
+   dotspacemacs-configuration-layers '(octave
+                                       nginx
+                                       typescript
+                                       (javascript :variables node-add-modules-path t)
+                                       lsp
+                                       php
+                                       elm
+                                       sql
                                        csv
-                                       octave
                                        ruby
                                        python
                                        docker
                                        haskell
                                        c-c++
                                        html
-                                       nixos
-                                       javascript
-                                       helm
                                        emacs-lisp
                                        git
-                                       dash
                                        markdown
                                        org
                                        ansible
-                                       csharp
-                                       scala
-                                       (scala :variables
-                                              scala-auto-start-ensime t
-                                              scala-auto-insert-asterisk-in-comments t
-                                              scala-enable-eldoc t)
                                        rust
                                        pdf-tools
                                        neotree
                                        theming
-                                       xkcd
                                        gnus
                                        (haskell :variables haskell-enable-hindent-style "fundamental")
                                        auto-completion (haskell :variables
@@ -46,28 +39,34 @@
                                                         auto-completion-complete-with-key-sequence nil
                                                         auto-completion-complete-with-key-sequence-delay 0.1
                                                         auto-completion-private-snippets-directory nil)
-                                       ;; (erc :variables
-                                       ;;      erc-nick "huxx"
-                                       ;;      erc-prompt-for-password nil
-                                       ;;      erc-prompt-for-nickserv-password nil
-                                       ;;      erc-highlight-notice '("JOIN" "QUIT")
-                                       ;;      erc-hide-list '("PART" "QUIT")
-                                       ;;      erc-autojoin-channels-alist '(("freenode.net" "#haskell" "#nixos")))
                                        (shell :variables
                                               shell-default-shell 'eshell
                                               shell-default-position 'bottom
-                                              shell-default-height 40))
-   dotspacemacs-additional-packages '(pandoc-mode
+                                              shell-default-height 40)
+                                       (osx :variables
+                                            osx-command-as       'hyper
+                                            osx-option-as        'none
+                                            osx-control-as       'control
+                                            osx-function-as      nil
+                                            osx-right-command-as 'left
+                                            osx-right-option-as  'left
+                                            osx-right-control-as 'left
+                                            osx-swap-option-and-command nil)
+
+                                       (keyboard-layout :variables kl-layout 'bepo)
+                                       )
+   dotspacemacs-additional-packages '(js2-mode
+                                      pandoc-mode
                                       all-the-icons
                                       dracula-theme
+                                      grayscale-theme
                                       pretty-mode
                                       groovy-mode
-                                      legalese
-                                      processing-mode
-                                      evil-mc)
+                                      evil-mc
+                                      projectile-ripgrep
+                                      fzf)
    dotspacemacs-frozen-packages '()
-   dotspacemacs-excluded-packages '(vi-tilde-fringe
-                                    spaceline)
+   dotspacemacs-excluded-packages '(vi-tilde-fringe)
    dotspacemacs-install-packages 'used-only))
 
 (defun dotspacemacs/init ()
@@ -86,13 +85,16 @@
 
 (defun dotspacemacs/user-config ()
   "Custom user configuration, doing all the displaying stuff after package are loaded."
-  (user-config/pretty)
+  ;; (user-config/pretty)
   (user-config/icons)
   (user-config/editing)
   (user-config/csharp)
   (user-config/java)
+  (user-config/javascript)
+  (user-config/ruby)
   (user-config/layout)
-  (user-config/magit))
+  (user-config/magit)
+  (user-config/apex))
 
 (defun init/vars ()
   "General variable configurations."
@@ -103,14 +105,14 @@
    dotspacemacs-elpa-subdirectory nil
    dotspacemacs-editing-style 'vim
    dotspacemacs-verbose-loading nil
-   dotspacemacs-startup-banner '998
+   dotspacemacs-startup-banner '999
    dotspacemacs-startup-lists '((recents . 5)
                                 (projects . 7))
    dotspacemacs-startup-buffer-responsive t
    dotspacemacs-scratch-mode 'text-mode
    dotspacemacs-colorize-cursor-according-to-state nil
    dotspacemacs-default-font '("Fira Code"
-                               :size 28)
+                               :size 14)
    dotspacemacs-leader-key "SPC"
    dotspacemacs-emacs-command-key "SPC"
    dotspacemacs-ex-command-key ":"
@@ -123,7 +125,7 @@
    dotspacemacs-visual-line-move-text nil
    dotspacemacs-ex-substitute-global nil
    dotspacemacs-default-layout-name "Olympe"
-   dotspacemacs-display-default-layout t
+   dotspacemacs-display-default-layout nil
    dotspacemacs-auto-resume-layouts nil
    dotspacemacs-large-file-size 1
    dotspacemacs-auto-save-file-location 'cache
@@ -144,7 +146,7 @@
    dotspacemacs-show-transient-state-title t
    dotspacemacs-show-transient-state-color-guide t
    dotspacemacs-mode-line-unicode-symbols t
-   dotspacemacs-mode-line-theme 'vanilla
+   dotspacemacs-mode-line-theme '(spacemacs :separator wave :separator-scale 1.5)
    dotspacemacs-smooth-scrolling nil
    dotspacemacs-line-numbers nil
    dotspacemacs-folding-method 'evil
@@ -154,8 +156,8 @@
    dotspacemacs-persistent-server t
    dotspacemacs-search-tools '("ag" "pt" "ack" "grep")
    dotspacemacs-default-package-repository nil
-   dotspacemacs-whitespace-cleanup nil
-   dotspacemacs-themes '(dracula)))
+   dotspacemacs-whitespace-cleanup t
+   dotspacemacs-themes '(grayscale)))
 
 (defun init/proxy ()
   "Load the proxy configuration if defined."
@@ -174,6 +176,15 @@
         eclimd-executable "~/eclipse/eclimd"
         eclimd-wait-for-process t))
 
+(defun user-config/javascript ()
+  (setq-default js-indent-level 2)
+  (setq-default js2-basic-offset 2)
+  (setq-default javascript-backend 'lsp)
+  )
+
+(defun user-config/ruby ()
+  (setq ruby-insert-encoding-magic-comment nil))
+
 (defun user-config/magit ()
   (load-file "~/.spacemacs.d/magit-gerrit.el"))
 
@@ -185,14 +196,21 @@
         evil-iedit-state-cursor '(box "gold")
         evil-lisp-state-cursor '(box "deep pink")))
 
+(defun my-save-if-bufferfilename ()
+  (if (buffer-file-name)
+      (progn
+        (save-buffer))
+    ()))
+
 (defun user-config/editing ()
   ;; Pandoc mode for markdown
   (add-hook 'markdown-mode-hook 'pandoc-mode)
-
-  ;; Avoid conflicting M-k/j with I3
+  ;; Save on exiting insert mode
+  (add-hook 'evil-insert-state-exit-hook 'my-save-if-bufferfilename)
+  ;; Remap for bépo
   (evil-define-key 'git-rebase-mode 'git-rebase-mode-map
-    "K" 'git-rebase-move-line-up
-    "J" 'git-rebase-move-line-down)
+    "S" 'git-rebase-move-line-up
+    "T" 'git-rebase-move-line-down)
 
   ;; Golden ratio for the current window
   (evil-leader/set-key "gr" 'golden-ratio)
@@ -226,12 +244,25 @@
 
   ;; Cursor
   (global-evil-mc-mode t)
-  (blink-cursor-mode t)
+  ;; (blink-cursor-mode t)
 
   ;; Bindings
-  (setq evil-escape-key-sequence "dk")
-  (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
-  (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line))
+  (define-key evil-normal-state-map (kbd "t") 'evil-next-visual-line)
+  (define-key evil-normal-state-map (kbd "s") 'evil-previous-visual-line)
+
+  ;; Search with ripgrep
+  (evil-leader/set-key "/" 'spacemacs/helm-project-do-ag)
+  (setq helm-ag-base-command "rg -S --no-heading")
+
+  (spacemacs/set-leader-keys "off" 'fzf)
+
+  ;; Vim like window navigation
+  (spacemacs/set-leader-keys "wc" 'evil-window-left)
+  (spacemacs/set-leader-keys "wt" 'evil-window-down)
+  (spacemacs/set-leader-keys "ws" 'evil-window-up)
+  (spacemacs/set-leader-keys "wr" 'evil-window-right)
+  (spacemacs/set-leader-keys "wh" 'evil-window-split)
+  )
 
 (defun user-config/pretty ()
   (load-file "~/.spacemacs.d/pretty-fonts.el")
@@ -240,9 +271,14 @@
   (require 'pretty-mode)
   (add-hook 'haskell-mode-hook 'turn-on-pretty-mode)
   (add-hook 'purescript-mode-hook 'turn-on-pretty-mode)
-  (pretty-deactivate-groups '(:equality :ordering :ordering-double :ordering-triple :arrows :arrows-twoheaded :punctuation :logic :nil))
-  (pretty-activate-groups
-   '(:arithmetic-nary :undefined :sqrt :greek :sets :quantifiers))
-  (pretty-fonts-set-kwds
-   '((pretty-fonts-fira-font prog-mode-hook org-mode-hook))))
+  ;; (pretty-deactivate-groups '(:equality :ordering :ordering-double :ordering-triple :arrows :arrows-twoheaded :punctuation :logic :nil))
+;;   (pretty-activate-groups
+;;    '(:arithmetic-nary :undefined :sqrt :greek :sets :quantifiers))
+;;   (pretty-fonts-set-kwds
+  '((pretty-fonts-fira-font prog-mode-hook org-mode-hook))
+)
 
+(defun user-config/apex ()
+  (add-to-list 'load-path "~/.emacs.d/lisp/")
+  (require 'apex-mode)
+  )
