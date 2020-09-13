@@ -7,7 +7,11 @@
    dotspacemacs-configuration-layer-path '()
    dotspacemacs-configuration-layers '(octave
                                        nginx
-                                       typescript
+                                       (typescript :variables
+                                                   typescript-backend 'lsp
+                                                   typescript-fmt-tool 'prettier
+                                                   typescript-linter 'eslint
+                                                   )
                                        (javascript :variables node-add-modules-path t)
                                        lsp
                                        php
