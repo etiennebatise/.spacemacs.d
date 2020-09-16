@@ -193,6 +193,18 @@
   (load-file "~/.spacemacs.d/magit-gerrit.el"))
 
 (defun user-config/layout ()
+  ;; Patched to allow everything but .DS_Store
+  ;; Tips from https://github.com/syl20bnr/spacemacs/issues/2751
+  (with-eval-after-load 'neotree
+    (defun neo-util--walk-dir (path)
+      "Return the subdirectories and subfiles of the PATH."
+      (let* ((full-path (neo-path--file-truename path)))
+        (condition-case nil
+            (directory-files
+             path 'full "^\\([^.]\\|\\.[^D.][^S]\\).*")
+          ('file-error
+           (message "Walk directory %S failed." path)
+           nil)))))
   (setq evil-insert-state-cursor '((bar . 4) "white")
         evil-normal-state-cursor '(box "white")
         evil-replace-state-cursor '(hollow "white")
